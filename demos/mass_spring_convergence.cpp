@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <memory>
 #include <nonlinfunc.hpp>
+#include <numbers>
 #include <timestepper.hpp>
 #include <vector>
 
