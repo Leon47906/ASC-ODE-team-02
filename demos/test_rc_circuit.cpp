@@ -42,7 +42,7 @@ public:
 };
 
 int main() {
-  double tend = 0.2;
+  double tend = 0.5;
   int steps = 400;
   double tau = tend / steps;
   double resistance = 100.0, capacitence = 1e-6;
@@ -55,7 +55,9 @@ int main() {
   auto U0 = Compose(c, scaled);
   auto rhs_rc = std::make_shared<RC_Circuit>(resistance, capacitence, U0);
 
-  ExplicitEuler stepper_rc(rhs_rc);
+  // ExplicitEuler stepper_rc(rhs_rc);
+  ImplicitEuler stepper_rc(rhs_rc);
+  // CrankNicolson stepper_rc(rhs_rc);
   std::ofstream outfile("output_test_ode_rc.txt");
   std::cout << 0.0 << "  " << y(0) << std::endl;
   outfile << 0.0 << "  " << y(0) << std::endl;

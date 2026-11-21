@@ -9,6 +9,9 @@ include_directories(src nanoblas/src)
 
 add_subdirectory (nanoblas)
 
+find_package(Catch2 3 REQUIRED)
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_executable (test_ode demos/test_ode.cpp)
 target_link_libraries (test_ode PUBLIC nanoblas)
@@ -19,3 +22,5 @@ target_link_libraries (demo_autodiff PUBLIC nanoblas)
 add_executable (test_rc_circuit demos/test_rc_circuit.cpp)
 target_link_libraries(test_rc_circuit PUBLIC nanoblas)
 
+add_executable (test_convergence demos/mass_spring_convergence.cpp)
+target_link_libraries (test_convergence PUBLIC nanoblas Catch2::Catch2WithMain)

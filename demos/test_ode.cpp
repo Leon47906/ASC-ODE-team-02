@@ -34,37 +34,6 @@ public:
   }
 };
 
-class RC_Circuit : public NonlinearFunction {
-private:
-  double resistance;
-  double capacitence;
-  // U0 is a function from R to R
-  std::shared_ptr<NonlinearFunction> U0;
-
-public:
-  RC_Circuit(double r, double c, std::shared_ptr<NonlinearFunction> u0)
-      : U0(u0), resistance(r), capacitence(c) {}
-
-  size_t dimX() const override { return 2; }
-  size_t dimF() const override { return 2; }
-
-  void evaluate(VectorView<double> x, VectorView<double> f) const override {
-    Vector<> tmp(1);
-    U0->evaluate(x.range(1, 2), tmp);
-    f(0) = (tmp(0) - x(0)) / (resistance * capacitence);
-    f(1) = 1.0;
-  }
-
-  void evaluateDeriv(VectorView<double> x,
-                     MatrixView<double> df) const override {
-    df = 0.0;
-    df(0, 0) = -1.0 / (resistance * capacitence);
-    Matrix<> tmp(1, 1);
-    U0->evaluateDeriv(x.range(1, 2), tmp);
-    df(0, 1) = tmp(0, 0) / (resistance * capacitence);
-  }
-};
-
 int main() {
   double tend = 4 * std::numbers::pi;
   int steps = 100;
