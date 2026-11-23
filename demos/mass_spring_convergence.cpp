@@ -38,7 +38,7 @@ public:
 
 double observed_order(const std::vector<double> &e) {
   size_t n = e.size();
-  double p;
+  double p = 0;
   for (size_t i = 0; i < n - 1; i++) {
     p += std::log2(e[i] / e[i + 1]);
   }

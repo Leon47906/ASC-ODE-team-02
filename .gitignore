@@ -38,3 +38,6 @@ build
 
 docs/_build
 demos/output*.txt
+vcpkg-configuration.json
+vcpkg.json
+vcpkg_installed
