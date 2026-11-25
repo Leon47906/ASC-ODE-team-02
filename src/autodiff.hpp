@@ -2,9 +2,10 @@
 #define AUTODIFF_HPP
 
 #include <cstddef>
-#include <ostream>
+#include <iostream>
 #include <cmath>
 #include <array>
+#include <stdexcept>
 
 
 namespace ASC_ode
@@ -93,6 +94,17 @@ namespace ASC_ode
   template <size_t N, typename T = double>
   auto operator+ (T a, const AutoDiff<N, T>& b) { return AutoDiff<N, T>(a) + b; }
 
+    template <size_t N, typename T = double>
+  AutoDiff<N, T> operator- (const AutoDiff<N, T>& a, const AutoDiff<N, T>& b)
+  {
+    AutoDiff<N, T> result(a.value() - b.value());
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = a.deriv()[i] - b.deriv()[i];
+    return result;
+  }
+
+  template <size_t N, typename T = double>
+  auto operator- (T a, const AutoDiff<N, T>& b) { return AutoDiff<N, T>(a) - b; }
 
   // product rule
   template <size_t N, typename T = double>
@@ -101,6 +113,52 @@ namespace ASC_ode
     AutoDiff<N, T> result(a.value() * b.value());
     for (size_t i = 0; i < N; i++)
       result.deriv()[i] = a.deriv()[i] * b.value() + a.value() * b.deriv()[i];
+    return result;
+  }
+
+  // quotient rule
+  template <typename T>
+  inline T checked_inverse(T x) {
+    const T inv = T(1) / x;
+    if (!std::isfinite(inv))
+      throw std::domain_error("AutoDiff: division by zero or overflow");
+    return inv;
+  }
+
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> operator/ (const AutoDiff<N, T>& a, const AutoDiff<N, T>& b) {
+    const T a_val = a.value();
+    const T b_val = b.value();
+    const T b_inv = checked_inverse(b_val);
+    const T q = a_val * b_inv;
+    AutoDiff<N, T> result(q);
+    for (size_t i = 0; i < N; i++)
+    {
+      result.deriv()[i] = (a.deriv()[i] - q * b.deriv()[i]) * b_inv;
+    }
+    return result;
+  }
+
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> operator/(const AutoDiff<N, T> &a, const T& b) {
+    const T a_val = a.value();
+    const T b_inv = checked_inverse(b);
+    AutoDiff<N, T> result(a_val * b_inv);
+    for (size_t i = 0; i < N; i++) {
+      result.deriv()[i] = a.deriv()[i] * b_inv;
+    }
+    return result;
+  }
+
+  template<size_t N, typename T = double>
+  AutoDiff<N, T> operator/(const T& a, const AutoDiff<N, T> &b) {
+    const T b_val = b.value();
+    const T b_inv = checked_inverse(b_val);
+    AutoDiff<N, T> result(a * b_inv);
+    const T coeff = -a * b_inv * b_inv;
+    for (size_t i = 0; i < N; i++) {
+      result.deriv()[i] = b.deriv()[i] * coeff;
+    }
     return result;
   }
 
@@ -115,6 +173,15 @@ namespace ASC_ode
     AutoDiff<N, T> result(sin(a.value()));
     for (size_t i = 0; i < N; i++)
       result.deriv()[i] = cos(a.value()) * a.deriv()[i];
+    return result;
+  }
+
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> cos(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(cos(a.value()));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = -sin(a.value()) * a.deriv()[i];
     return result;
   }
 
