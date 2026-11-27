@@ -45,7 +45,7 @@ int main() {
     std::cout << "f = " << f.value().value() << std::endl;
 
     for (size_t i = 0; i < 2; i++) {
-      std::cout << "f_" << i << " = " << f.deriv()[i].value() << std::endl;
+      std::cout << "f_" << i << " = " << f.value().deriv()[i] << std::endl;
     }
 
     for (size_t i = 0; i < 2; i++) {
