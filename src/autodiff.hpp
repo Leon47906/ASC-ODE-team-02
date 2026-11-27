@@ -165,6 +165,8 @@ namespace ASC_ode
   // sin and cos of doubles must still be found next to the AutoDiff versions
   using std::sin;
   using std::cos;
+  using std::exp;
+  using std::log;
 
   // chain rule
   template <size_t N, typename T = double>
@@ -185,6 +187,22 @@ namespace ASC_ode
     return result;
   }
 
+  template <size_t N, typename T = double> 
+  AutoDiff<N, T> exp(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(exp(a.value()));
+    for (size_t i = 0; i < N; i++)
+      result.deriv()[i] = a.deriv()[i] * exp(a.value());
+    return result;
+  }
+
+  template <size_t N, typename T = double>
+  AutoDiff<N, T> log(const AutoDiff<N, T> &a)
+  {
+    AutoDiff<N, T> result(log(a.value()));
+    for (size_t i =0; i<N; i++)
+      result.deriv()[i] = a.deriv()[i] / a.value();
+  }
 
 } // namespace ASC_ode
 
