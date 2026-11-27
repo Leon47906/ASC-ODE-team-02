@@ -112,6 +112,15 @@ AutoDiff<N, T> operator*(const AutoDiff<N, T> &a, const AutoDiff<N, T> &b) {
   return result;
 }
 
+template <size_t N, typename T = double>
+AutoDiff<N, T> operator*(const double &a, const AutoDiff<N, T> &b) {
+  AutoDiff<N, T> result(a * b.value());
+  for (size_t i = 0; i < N; i++) {
+    result.deriv()[i] = a * b.deriv()[i];
+  }
+  return result;
+}
+
 // quotient rule
 template <typename T> inline T checked_inverse(T x) {
   const T inv = T(1) / x;

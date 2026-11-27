@@ -25,6 +25,9 @@ target_link_libraries(test_rc_circuit PUBLIC nanoblas)
 add_executable(demo_legendre demos/demo_legendre.cpp)
 target_link_libraries(demo_legendre PUBLIC nanoblas)
 
+add_executable(demo_pendulum demos/demo_pendulum.cpp)
+target_link_libraries(demo_pendulum PUBLIC nanoblas)
+
 add_executable (test_convergence demos/mass_spring_convergence.cpp)
 target_link_libraries (test_convergence PUBLIC nanoblas Catch2::Catch2WithMain)
 
