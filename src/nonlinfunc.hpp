@@ -6,6 +6,7 @@
 
 #include <matrix.hpp>
 #include <vector.hpp>
+#include <vector>
 
 namespace ASC_ode {
 using namespace nanoblas;
@@ -281,6 +282,22 @@ public:
     }
   }
 };
+
+template <typename T> void LegendrePolynomials(int n, T x, std::vector<T> &p) {
+  if (n < 0) {
+    p.clear();
+    return;
+  }
+  p.resize(n + 1);
+  p[0] = T(1);
+  if (n == 0) {
+    return;
+  }
+  p[1] = x;
+  for (int k = 2; k < n; k++) {
+    p[k] = T(2 * k - 1) / T(k) * x * p[k - 1] - T(k - 1) / T(k) * p[k - 2];
+  }
+}
 } // namespace ASC_ode
 
 #endif

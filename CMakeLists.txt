@@ -24,3 +24,6 @@ target_link_libraries(test_rc_circuit PUBLIC nanoblas)
 
 add_executable (test_convergence demos/mass_spring_convergence.cpp)
 target_link_libraries (test_convergence PUBLIC nanoblas Catch2::Catch2WithMain)
+
+add_executable(test_autodiff demos/test_autodiff.cpp)
+target_link_libraries(test_autodiff PUBLIC nanoblas Catch2::Catch2WithMain)
