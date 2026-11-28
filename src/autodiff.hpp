@@ -121,12 +121,20 @@ AutoDiff<N, T> operator*(const double &a, const AutoDiff<N, T> &b) {
   return result;
 }
 
+// innermost scalar: just return it
+template <typename T> constexpr T base_value(const T &x) { return x; }
+
+// AutoDiff: unwrap one level and recurse
+template <size_t N, typename T>
+constexpr auto base_value(const AutoDiff<N, T> &x) {
+  return base_value(x.value());
+}
+
 // quotient rule
-template <typename T> inline T checked_inverse(T x) {
-  const T inv = T(1) / x;
-  if (!std::isfinite(inv))
-    throw std::domain_error("AutoDiff: division by zero or overflow");
-  return inv;
+template <typename T> inline T checked_inverse(const T &x) {
+  if (!std::isfinite(base_value(x)) || base_value(x) == 0)
+    throw std::domain_error("AutoDiff: division by zero or invalid value");
+  return T(1) / x;
 }
 
 template <size_t N, typename T = double>

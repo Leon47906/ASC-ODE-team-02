@@ -5,6 +5,8 @@
 #include <vector>
 
 using namespace ASC_ode;
+using AD = AutoDiff<1>;
+using AD2 = AutoDiff<1, AD>;
 // Plot
 int main() {
   int points = 101;
@@ -15,20 +17,23 @@ int main() {
   }
 
   int max_order = 5;
-  std::vector<AutoDiff<1>> p(max_order + 1);
+  std::vector<AD2> p(max_order + 1);
 
   std::ofstream outfile("output_demo_legendre.txt");
   outfile << "x";
   for (int order = 0; order < max_order + 1; order++) {
-    outfile << " " << order << " " << order << "'";
+    outfile << " " << order << " " << order << "'" << " " << order << "''";
   }
   outfile << std::endl;
   for (size_t step = 0; step < points; step++) {
-    AutoDiff<1> x = Variable<0>(xs[step]);
-    LegendrePolynomials(max_order + 1, x, p);
+    AD adx = Variable<0>(xs[step]);
+    AD2 x = Variable<0, AD>(adx);
+    LegendrePolynomials<AD2>(max_order + 1, x, p);
     outfile << xs[step];
     for (int order = 0; order < max_order + 1; order++) {
-      outfile << " " << p[order].value() << " " << p[order].deriv()[0];
+      outfile << " " << base_value(p[order]) << " "
+              << base_value(p[order].deriv()[0]) << " "
+              << p[order].deriv()[0].deriv()[0];
     }
     outfile << std::endl;
   }
